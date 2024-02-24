@@ -1,0 +1,48 @@
+body {
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    background-image: url('./assets/img/background.png');
+    background-size: cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    overflow: hidden;
+}
+
+.button-container {
+    text-align: center;
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 20px;
+    border-radius: 25px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.difficulty-button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 30px 60px;
+    margin: 20px;
+    border: none;
+    border-radius: 15px;
+    font-size: 30px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.difficulty-button:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+#easy {
+    background-color: #4CAF50;
+}
+
+#medium {
+    background-color: #ff9800;
+}
+
+#hard {
+    background-color: #f44336;
+}
