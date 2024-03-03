@@ -13,6 +13,14 @@
                     <a href="displayQuestions.php"><i class="fas fa-file-alt"></i> Questions</a>
                     
                 </li>
+                <li>
+                    <a href="leaderboard.php"><i class="fas fa-chart-bar"></i> Leaderboard</a>
+                    
+                </li>
+                <li>
+                    <a href="stats.php"><i class="fas fa-chart-line"></i> Stats</a>
+                    
+                </li>
                 <!-- <li>
                     <a href="users.php"><i class="fas fa-user-friends"></i>Users</a>
                 </li> -->

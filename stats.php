@@ -53,6 +53,7 @@ $dates = array_map(function ($game) {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -61,94 +62,108 @@ $dates = array_map(function ($game) {
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
-        body, html {
+        html,
+        body {
             height: 100%;
             margin: 0;
-            /* background-color: #000; */
-        }
-
-        body {
+            padding: 0;
             font-family: 'Press Start 2P', cursive;
+            color: #FFF;
+            background-color: #000;
+            /* Adjusted the background color */
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
-            color: #FFF;
+            justify-content: center;
         }
+
+        .video-bg {
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            min-width: 100%;
+            min-height: 100%;
+            z-index: -1;
+            opacity: 0.75;
+        }
+
         .content-container {
-            z-index: 2;
-            background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent overlay */
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 15px rgba(255, 255, 0, 0.5);
-            margin: 20px;
-            width: 90%;
-            max-width: 800px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            /* Align to the top */
+            height: 100%;
+            width: auto;
+            /* Width automatically adjusts */
+            max-width: 90%;
+            /* Max width to avoid overly wide on larger screens */
+            margin: 1vh auto;
+            /* Small vertical margin for some spacing */
+            padding: 1vh 1vw;
+            /* Padding based on viewport size for responsiveness */
+            box-sizing: border-box;
+            /* Include padding and border in the box's size */
+            overflow-y: auto;
+            /* Scroll if content is too tall */
         }
 
-        h3 {
-            color: #FFD700;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        table {
+        /* Adjustments for the graph container */
+        .graph-container {
             width: 100%;
-            border-collapse: collapse;
+            /* Full width of the parent container */
+            max-width: 90%;
+            /* Max width to avoid overly wide on larger screens */
+            height: 50%;
+            /* Use 50% of the parent container's height */
+            margin: 1vh auto;
+            /* Center it vertically with margin */
         }
 
-        th, td {
-            border: 1px solid #FFFFFF;
-            padding: 8px;
-            text-align: left;
-            color: #FFF;
-        }
-
-        th {
-            background-color: #004D40;
-        }
-
-        tr:nth-child(even) {
-            background-color: #002f2f;
-        }
-
-        tr:hover {
-            background-color: #013636;
-        }
-
-        .scoresChartContainer {
-            margin: 20px 0;
-            background-color: rgba(0, 0, 0, 0.5);
-            padding: 10px;
-            border-radius: 10px;
-        }
-
-        canvas {
+        /* Adjustments for the table to make it less clumpy */
+        table {
+            text-align: center;
+            width: 100%;
             max-width: 100%;
-            height: auto;
+            /* Max width to avoid overflow */
+            table-layout: fixed;
+            /* Fixed layout for equal column distribution */
+            word-wrap: break-word;
+            /* Break words to the next line if needed */
         }
 
-.video-bg {
-    position: fixed;
-    right: 0;
-    bottom: 0;
-    min-width: 100%;
-    min-height: 100%;
-    z-index: -1;
-    opacity: 0.75; /* Lower opacity to ensure content stands out */
-}
+        /* Responsive font size for the table */
+        td,
+        th {
+            font-size: calc(8px + 0.5vw);
+            /* Smaller base size plus viewport width */
+            padding: 0.5vw;
+            /* Padding based on viewport width */
+        }
 
+        /* Add media query for very small screens to adjust font sizes */
+        @media (max-width: 600px) {
+
+            td,
+            th {
+                font-size: calc(7px + 1vw);
+                /* Even smaller base size for tiny screens */
+                padding: 0.5vw;
+            }
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
+
 <body>
     <video autoplay loop muted class="video-bg">
         <source src="bee.mp4" type="video/mp4">
         Your browser does not support the video tag.
     </video>
     <div class="content-container">
-        
-    <button type="button" class="difficulty-button" onclick="window.location.href='play.php';">Home</button>
+
+        <button type="button" class="difficulty-button" onclick="window.location.href='play.php';">Home</button>
+        <h2>Your Performance</h2>
         <canvas id="scoresChart"></canvas>
         <div class="scoresChartContainer">
             <h3>Game History</h3>
@@ -160,10 +175,14 @@ $dates = array_map(function ($game) {
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach($games_data as $session): ?>
+                    <?php foreach ($games_data as $session): ?>
                         <tr>
-                            <td><?php echo date("Y-m-d H:i:s", strtotime($session['created_at'])); ?></td>
-                            <td><?php echo htmlspecialchars($session['score']); ?></td>
+                            <td>
+                                <?php echo date("Y-m-d H:i:s", strtotime($session['created_at'])); ?>
+                            </td>
+                            <td>
+                                <?php echo htmlspecialchars($session['score']); ?>
+                            </td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
@@ -174,7 +193,7 @@ $dates = array_map(function ($game) {
     <script>
         var scores = <?php echo json_encode($scores); ?>;
         var dates = <?php echo json_encode($dates); ?>;
-        
+
         var ctx = document.getElementById('scoresChart').getContext('2d');
         var scoresChart = new Chart(ctx, {
             type: 'line',
@@ -210,4 +229,5 @@ $dates = array_map(function ($game) {
         });
     </script>
 </body>
+
 </html>

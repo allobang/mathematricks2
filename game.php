@@ -1,4 +1,5 @@
 <?php
+// var_dump($_POST['difficulty']); die();
 session_start();
 require_once('connection.php'); // Using require_once to ensure the connection file is included only once
 
@@ -9,7 +10,7 @@ if (empty($_SESSION['logged_in']) || !$_SESSION['logged_in']) {
 }
 
 // Prepare and execute query to fetch quiz questions
-$userGrade = $_SESSION['grade'] ?? ''; // Using null coalescing operator for safety
+$userGrade = $_POST['difficulty'] ?? ''; // Using null coalescing operator for safety
 $questions = fetchQuizQuestions($userGrade);
 
 // Insert a new player session if questions are available
@@ -75,6 +76,8 @@ function initializeSessionVariables($sessionID, $totalQuestions)
     <!-- Style here or link to external CSS -->
     <style>
         body {
+            background-image: url("assets/img/bg.png");
+            background-size: cover;
     font-family: 'Poppins', sans-serif;
     background: linear-gradient(135deg, #abe9cd 0%, #3eadcf 100%);
     padding: 20px;
@@ -246,10 +249,6 @@ function initializeSessionVariables($sessionID, $totalQuestions)
 </head>
 
 <body>
-    <video autoplay loop muted class="video-bg">
-        <source src="bee.mp4" type="video/mp4">
-        Your browser does not support the video tag.
-    </video>
     <div class="timer-sound-container">
     <div id="timer" style="font-size:20px;">01:00</div>
 

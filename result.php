@@ -33,7 +33,7 @@ while ($attempt = $attemptsResult->fetch_assoc()) {
 }
 $totalScore = $_SESSION['quiz_score'] ?? 0;
 $totalQuestions = count($questions);
-
+ 
 $correctCount = 0;
 $incorrectCount = 0;
 $unansweredCount = $totalQuestions;
@@ -58,6 +58,8 @@ foreach ($answeredAttempts as $attempt) {
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
+            background-image: url("assets/img/bg.png");
+            background-size: cover;
             font-family: 'Poppins', sans-serif;
             background-color: #fafafa;
             color: #333;
@@ -163,11 +165,6 @@ foreach ($answeredAttempts as $attempt) {
 </head>
 
 <body>
-    <video autoplay loop muted class="video-bg">
-        <source src="bee.mp4" type="video/mp4">
-        Your browser does not support the video tag.
-    </video>
-    
     <div class="content-container">
     <h1>Quiz Results</h1>
     <div class="score-summary">
@@ -179,7 +176,8 @@ foreach ($answeredAttempts as $attempt) {
     </div>
 
     <div>
-        <canvas id="quizResultsChart"></canvas>
+    <canvas id="quizResultsChart" style="width: 500px; height: 400px;"></canvas>
+
         
     <button onclick="window.location.href='play.php';">Play Again</button>
     </div>

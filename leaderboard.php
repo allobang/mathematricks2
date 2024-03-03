@@ -59,6 +59,8 @@ $mysqli->close();
     <title>Leaderboard - Mathematricks</title>
     <style>
         body {
+            background-image: url("assets/img/bg.png");
+            background-size: cover;
             font-family: 'Arial', sans-serif;
             background-color: #f0f0f0;
             color: #333;
@@ -130,10 +132,6 @@ $mysqli->close();
     </style>
 </head>
 <body>
-    <video autoplay loop muted class="video-bg">
-        <source src="bee.mp4" type="video/mp4">
-        Your browser does not support the video tag.
-    </video>
     <div class="leaderboard-container">
         <!-- <div class="welcome-message">Welcome, <?= $fullname; ?>!</div> -->
         

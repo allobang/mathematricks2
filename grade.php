@@ -1,4 +1,5 @@
 <?php
+
 session_start(); // Start the session to access session variables.
 $username = isset($_SESSION['username']) ? $_SESSION['username'] : 'Player'; // Default to 'Player' if not set.
 
@@ -116,7 +117,7 @@ $username = isset($_SESSION['username']) ? $_SESSION['username'] : 'Player'; // 
             /* Smooth transitions */
             outline: none;
             display: block;
-            width: 90%;
+            width: 100%;
             /* Increased width for more space */
             max-width: 600px;
             /* Optional: Prevents the button from becoming too wide on large screens */
@@ -168,23 +169,17 @@ $username = isset($_SESSION['username']) ? $_SESSION['username'] : 'Player'; // 
         <div class="logo-container">
             <img src="assets/img/logo.png" alt="Mathematricks Logo"> <!-- Logo placement -->
         </div>
-        <div class="game-title">Mathematricks</div>
-        <div class="welcome-message">Welcome,
-            <?= htmlspecialchars($username); ?>!
-        </div> <!-- Welcome message -->
-        <form action="difficulty.php" method="post">
-            <!-- <button class="difficulty-button" name="difficulty" onclick="window.location.href='grade.php';">Play</button> -->
-            <!-- <button class="difficulty-button" name="difficulty" value="medium">Badges</button> -->
-            <button type="button" class="difficulty-button" onclick="window.location.href='grade.php';">Play</button>
-            <button type="button" class="difficulty-button" onclick="window.location.href='stats.php';">Stats</button>
-            <button type="button" class="difficulty-button" onclick="window.location.href='leaderboard.php';">Leaderboard</button>
-            <?php
-            // Check if the user type is set and equals 'admin'
-            if (isset($_SESSION['usertype']) && $_SESSION['usertype'] == 'admin') {
-                echo '<button type="button" class="difficulty-button" onclick="window.location.href=\'displayQuestions.php\';">Question</button>';
-            }
-            ?>
-            <button type="button" class="difficulty-button" onclick="window.location.href='logout.php';">Logout</button>
+        <div class="game-title">Select Grade</div>
+        <!-- <div class="welcome-message">Select Grade -->
+        <!-- </div> Welcome message -->
+        <form action="game.php" method="post">
+            <button class="difficulty-button" name="difficulty" value="1">Grade 1</button>
+            <button class="difficulty-button" name="difficulty" value="2">Grade 2</button>
+            <button class="difficulty-button" name="difficulty" value="3">Grade 3</button>
+            <button class="difficulty-button" name="difficulty" value="4">Grade 4</button>
+            <button class="difficulty-button" name="difficulty" value="5">Grade 5</button>
+            <button class="difficulty-button" name="difficulty" value="6">Grade 6</button>
+            <button type="button" class="difficulty-button" onclick="window.location.href='play.php';">Back</button>
         </form>
 
         <button class="icon-button" onclick="toggleSound()">
