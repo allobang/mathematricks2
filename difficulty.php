@@ -4,6 +4,7 @@ session_start(); // Start the session to access session variables.
 require_once('connection.php');
 $username = isset($_SESSION['username']) ? $_SESSION['username'] : 'Player'; // Default to 'Player' if not set.
 $userGrade = $_POST['difficulty'] ?? ''; // Using null coalescing operator for safety
+$_SESSION['grade'] = $userGrade;
 $user_id = $_SESSION['user_id']; // Use the user_id from session directly.
 
 // Retrieve the total correct answers for the current user
@@ -204,7 +205,7 @@ $hard_unlocked = $total_correct_answers >= 50;
         <div class="game-title">Select Difficulty</div>
         <!-- <div class="welcome-message">Select Grade -->
         <!-- </div> Welcome message -->
-        <form action="difficulty.php" method="post">
+        <form action="game.php" method="post">
             <button class="difficulty-button" name="difficulty" value="easy">Easy</button>
 
             <button class="difficulty-button <?php echo $medium_unlocked ? '' : 'disabled-button'; ?>" name="difficulty" value="medium" <?php echo $medium_unlocked ? '' : 'disabled'; ?> data-tooltip="Unlock Medium by answering 20 correct questions.">Medium</button>

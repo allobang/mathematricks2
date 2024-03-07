@@ -8,9 +8,10 @@ if (empty($_SESSION['logged_in']) || !$_SESSION['logged_in']) {
     header("Location: login.php");
     exit;
 }
-
+$grade = $_SESSION['grade'];
+$difficulty = $_POST['difficulty'];
 // Prepare and execute query to fetch quiz questions
-$questions = fetchQuizQuestions($userGrade);
+$questions = fetchQuizQuestions($grade, $difficulty);
 $timerDurationMinutes = fetchTimerSetting();
 
 // Insert a new player session if questions are available
@@ -28,11 +29,13 @@ if (!empty($questions)) {
 // Redirect or further process
 
 // Functions used above for clarity and reusability
-function fetchQuizQuestions($grade)
+function fetchQuizQuestions($grade, $difficulty)
 {
     global $mysqli; // Ensure $mysqli is accessible within the function
-    $stmt = $mysqli->prepare("SELECT id, question, choice1, choice2, choice3, choice4, answer, image_url FROM quizquestions WHERE grade = ?");
-    $stmt->bind_param("s", $grade);
+    // Prepare the SQL query with placeholders for grade and difficulty
+    $stmt = $mysqli->prepare("SELECT id, question, choice1, choice2, choice3, choice4, answer, image_url FROM quizquestions WHERE grade = ? AND difficulty = ?");
+    // Bind the parameters for grade and difficulty to the prepared statement
+    $stmt->bind_param("ss", $grade, $difficulty);
     $stmt->execute();
     $result = $stmt->get_result();
     $questions = $result->fetch_all(MYSQLI_ASSOC);
