@@ -181,7 +181,7 @@ $username = isset($_SESSION['username']) ? $_SESSION['username'] : 'Player'; // 
             <?php
             // Check if the user type is set and equals 'admin'
             if (isset($_SESSION['usertype']) && $_SESSION['usertype'] == 'admin') {
-                echo '<button type="button" class="difficulty-button" onclick="window.location.href=\'displayQuestions.php\';">Question</button>';
+                echo '<button type="button" class="difficulty-button" onclick="window.location.href=\'displayQuestions.php\';">Dashboard</button>';
             }
             ?>
             <button type="button" class="difficulty-button" onclick="window.location.href='logout.php';">Logout</button>

@@ -24,8 +24,8 @@
                 <!-- <li>
                     <a href="users.php"><i class="fas fa-user-friends"></i>Users</a>
                 </li> -->
-                <!-- <li>
-                    <a href="settings.html"><i class="fas fa-cog"></i>Settings</a>
-                </li> -->
+                <li>
+                    <a href="settings.php"><i class="fas fa-cog"></i>Settings</a>
+                </li>
             </ul>
         </nav>

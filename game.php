@@ -10,8 +10,8 @@ if (empty($_SESSION['logged_in']) || !$_SESSION['logged_in']) {
 }
 
 // Prepare and execute query to fetch quiz questions
-$userGrade = $_POST['difficulty'] ?? ''; // Using null coalescing operator for safety
 $questions = fetchQuizQuestions($userGrade);
+$timerDurationMinutes = fetchTimerSetting();
 
 // Insert a new player session if questions are available
 if (!empty($questions)) {
@@ -62,6 +62,18 @@ function initializeSessionVariables($sessionID, $totalQuestions)
     $_SESSION['incorrect_answers'] = 0;
     $_SESSION['answered_questions'] = 0;
 }
+
+function fetchTimerSetting() {
+    global $mysqli; // Ensure $mysqli is accessible within the function
+    $query = "SELECT setting_value FROM quiz_settings WHERE setting_name = 'quiz_duration' ORDER BY updated_at DESC LIMIT 1";
+    $result = $mysqli->query($query);
+
+    if ($result && $row = $result->fetch_assoc()) {
+        return $row['setting_value']; // Return the most recent timer duration in minutes
+    } else {
+        return 0; // Default value in case the setting is not found
+    }
+}
 ?>
 
 
@@ -78,189 +90,194 @@ function initializeSessionVariables($sessionID, $totalQuestions)
         body {
             background-image: url("assets/img/bg.png");
             background-size: cover;
-    font-family: 'Poppins', sans-serif;
-    background: linear-gradient(135deg, #abe9cd 0%, #3eadcf 100%);
-    padding: 20px;
-    text-align: center;
-    color: #02475e;
-}
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #abe9cd 0%, #3eadcf 100%);
+            padding: 20px;
+            text-align: center;
+            color: #02475e;
+        }
 
-.question-form {
-    background-color: #ffffffaa;
-    padding: 20px;
-    margin-bottom: 20px;
-    border-radius: 15px;
-    box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease;
-}
+        .question-form {
+            background-color: #ffffffaa;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 15px;
+            box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
 
-.question-form:hover {
-    transform: translateY(-5px);
-}
+        .question-form:hover {
+            transform: translateY(-5px);
+        }
 
-.question p {
-    font-size: 22px;
-    color: #333;
-}
+        .question p {
+            font-size: 22px;
+            color: #333;
+        }
 
-.question-image img {
-    max-width: 30%;
-    height: auto;
-    border-radius: 10px;
-    margin: 10px 0;
-}
+        .question-image img {
+            max-width: 30%;
+            height: auto;
+            border-radius: 10px;
+            margin: 10px 0;
+        }
 
-.choices label {
-    background-color: #f9f9f9;
-    display: block;
-    margin: 10px auto;
-    font-size: 18px;
-    padding: 10px;
-    border-radius: 25px;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-    width: 80%;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
+        .choices label {
+            background-color: #f9f9f9;
+            display: block;
+            margin: 10px auto;
+            font-size: 18px;
+            padding: 10px;
+            border-radius: 25px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
 
-.choices label:hover {
-    background-color: #e2e2e2;
-}
+        .choices label:hover {
+            background-color: #e2e2e2;
+        }
 
-.choices input[type="radio"] {
-    appearance: none;
-    -webkit-appearance: none;
-    clip: rect(0, 0, 0, 0);
-    clip-path: inset(50%);
-    overflow: hidden;
-    position: absolute;
-    white-space: nowrap;
-    width: 1px;
-    height: 1px;
-    margin: -1px;
-    padding: 0;
-}
+        .choices input[type="radio"] {
+            appearance: none;
+            -webkit-appearance: none;
+            clip: rect(0, 0, 0, 0);
+            clip-path: inset(50%);
+            overflow: hidden;
+            position: absolute;
+            white-space: nowrap;
+            width: 1px;
+            height: 1px;
+            margin: -1px;
+            padding: 0;
+        }
 
-.choices label:before {
-    content: '';
-    display: inline-block;
-    height: 20px;
-    width: 20px;
-    border-radius: 50%;
-    margin-right: 10px;
-    vertical-align: middle;
-    border: 2px solid #333;
-    background-color: #fff;
-}
+        .choices label:before {
+            content: '';
+            display: inline-block;
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            margin-right: 10px;
+            vertical-align: middle;
+            border: 2px solid #333;
+            background-color: #fff;
+        }
 
-.choices input[type="radio"]:checked + label:before {
-    background-color: #4caf50;
-    border-color: #4caf50;
-}
+        .choices input[type="radio"]:checked+label:before {
+            background-color: #4caf50;
+            border-color: #4caf50;
+        }
 
-.submit-btn, #finishQuizBtn {
-    background-color: #00b4d8;
-    color: white;
-    border: none;
-    padding: 12px 24px;
-    font-size: 18px;
-    border-radius: 25px;
-    cursor: pointer;
-    display: inline-block;
-    margin: 20px auto;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-    transition: background-color 0.3s, transform 0.3s;
-}
+        .submit-btn,
+        #finishQuizBtn {
+            background-color: #00b4d8;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 18px;
+            border-radius: 25px;
+            cursor: pointer;
+            display: inline-block;
+            margin: 20px auto;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s, transform 0.3s;
+        }
 
-.submit-btn:hover, #finishQuizBtn:hover {
-    background-color: #0096c7;
-    transform: translateY(-3px);
-}
+        .submit-btn:hover,
+        #finishQuizBtn:hover {
+            background-color: #0096c7;
+            transform: translateY(-3px);
+        }
 
-.timer-sound-container {
-    position: fixed;
-    left: 20px;
-    top: 20px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px;
-    border-radius: 10px;
-    background-color: #ffffffaa;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-    z-index: 100;
-}
+        .timer-sound-container {
+            position: fixed;
+            left: 20px;
+            top: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            border-radius: 10px;
+            background-color: #ffffffaa;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+        }
 
-.icon-button, .icon-button.home-icon {
-    padding: 5px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #333;
-    text-decoration: none;
-}
+        .icon-button,
+        .icon-button.home-icon {
+            padding: 5px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+            text-decoration: none;
+        }
 
-@media (max-width: 768px) {
-    .question-image img {
-        max-width: 80%; /* Adjust for smaller screens */
-    }
+        @media (max-width: 768px) {
+            .question-image img {
+                max-width: 80%;
+                /* Adjust for smaller screens */
+            }
 
-    #timer, #finishQuizBtn {
-        top: auto;
-        bottom: 10px;
-        left: 10px;
-        font-size: 16px;
-        padding: 8px;
-    }
+            #timer,
+            #finishQuizBtn {
+                top: auto;
+                bottom: 10px;
+                left: 10px;
+                font-size: 16px;
+                padding: 8px;
+            }
 
-    #finishQuizBtn {
-        right: 10px;
-    }
-}
+            #finishQuizBtn {
+                right: 10px;
+            }
+        }
 
-.submit-btn:disabled, #finishQuizBtn:disabled {
-    background-color: #b0bec5;
-    color: #78909c;
-    cursor: not-allowed;
-    box-shadow: none;
-}
+        .submit-btn:disabled,
+        #finishQuizBtn:disabled {
+            background-color: #b0bec5;
+            color: #78909c;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
 
-.choices {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 15px;
-    margin-top: 20px;
-}
+        .choices {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
 
-.video-bg {
-    position: fixed;
-    right: 0;
-    bottom: 0;
-    min-width: 100%;
-    min-height: 100%;
-    z-index: -1;
-}
-
+        .video-bg {
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            min-width: 100%;
+            min-height: 100%;
+            z-index: -1;
+        }
     </style>
 </head>
 
 <body>
     <div class="timer-sound-container">
-    <div id="timer" style="font-size:20px;">01:00</div>
+        <div id="timer" style="font-size:20px;">00:00:00</div>
 
-    <!-- Home Icon Button -->
-    <a href="play.php" class="icon-button home-icon">
-        <i class="fas fa-home"></i> <!-- Home icon -->
-    </a>
+        <!-- Home Icon Button -->
+        <a href="play.php" class="icon-button home-icon">
+            <i class="fas fa-home"></i> <!-- Home icon -->
+        </a>
 
-    <button id="icon-button" class="icon-button" onclick="toggleSound()">
-        <i class="fas fa-volume-mute"></i> <!-- Mute icon initially -->
-    </button>
-</div>
+        <button id="icon-button" class="icon-button" onclick="toggleSound()">
+            <i class="fas fa-volume-mute"></i> <!-- Mute icon initially -->
+        </button>
+    </div>
 
     <audio id="backgroundMusic" src="mathematricks.mp3" loop></audio>
 
@@ -317,9 +334,8 @@ function initializeSessionVariables($sessionID, $totalQuestions)
     <!-- end of body -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Initialize the timer
-            initializeTimer(120); // Set timer for 30 seconds
-
+            var timerDurationInSeconds = <?php echo $timerDurationMinutes * 60; ?>; // Convert minutes to seconds
+            initializeTimer(timerDurationInSeconds);
             // Handle form submissions
             document.querySelectorAll('.question-form').forEach(form => {
                 form.addEventListener('submit', function (event) {
@@ -351,10 +367,16 @@ function initializeSessionVariables($sessionID, $totalQuestions)
         }
 
         function updateTimerDisplay(time) {
+            const hours = Math.floor(time / 3600);
+            time %= 3600; // Update time to remaining seconds after extracting hours
             const minutes = Math.floor(time / 60);
             const seconds = time % 60;
-            document.getElementById('timer').textContent = `${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+            document.getElementById('timer').textContent =
+                `${hours < 10 ? '0' : ''}${hours}:` +
+                `${minutes < 10 ? '0' : ''}${minutes}:` +
+                `${seconds < 10 ? '0' : ''}${seconds}`;
         }
+
 
         function submitForm(form) {
             const submitButton = form.querySelector('.submit-btn');

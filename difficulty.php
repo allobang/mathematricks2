@@ -1,8 +1,23 @@
 <?php
 
 session_start(); // Start the session to access session variables.
+require_once('connection.php');
 $username = isset($_SESSION['username']) ? $_SESSION['username'] : 'Player'; // Default to 'Player' if not set.
+$userGrade = $_POST['difficulty'] ?? ''; // Using null coalescing operator for safety
+$user_id = $_SESSION['user_id']; // Use the user_id from session directly.
 
+// Retrieve the total correct answers for the current user
+$total_correct_answers_query = "SELECT SUM(correct_answers) AS total_correct_answers FROM player_sessions WHERE user_id = ?";
+$stmt = $mysqli->prepare($total_correct_answers_query);
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$result = $stmt->get_result();
+$row = $result->fetch_assoc();
+$total_correct_answers = $row['total_correct_answers'];
+
+// Determine if the medium and hard buttons should be enabled
+$medium_unlocked = $total_correct_answers >= 20;
+$hard_unlocked = $total_correct_answers >= 50;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -161,6 +176,23 @@ $username = isset($_SESSION['username']) ? $_SESSION['username'] : 'Player'; // 
             margin: 0 auto 20px;
             /* Centering margin and spacing from the title */
         }
+        .disabled-button {
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        .disabled-button:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            top: -5px;
+            right: 105%;
+            background-color: black;
+            color: white;
+            padding: 5px;
+            border-radius: 5px;
+            font-size: smaller;
+            white-space: nowrap;
+        }
     </style>
 </head>
 
@@ -169,17 +201,17 @@ $username = isset($_SESSION['username']) ? $_SESSION['username'] : 'Player'; // 
         <div class="logo-container">
             <img src="assets/img/logo.png" alt="Mathematricks Logo"> <!-- Logo placement -->
         </div>
-        <div class="game-title">Select Grade</div>
+        <div class="game-title">Select Difficulty</div>
         <!-- <div class="welcome-message">Select Grade -->
         <!-- </div> Welcome message -->
         <form action="difficulty.php" method="post">
-            <button class="difficulty-button" name="difficulty" value="1">Grade 1</button>
-            <button class="difficulty-button" name="difficulty" value="2">Grade 2</button>
-            <button class="difficulty-button" name="difficulty" value="3">Grade 3</button>
-            <button class="difficulty-button" name="difficulty" value="4">Grade 4</button>
-            <button class="difficulty-button" name="difficulty" value="5">Grade 5</button>
-            <button class="difficulty-button" name="difficulty" value="6">Grade 6</button>
-            <button type="button" class="difficulty-button" onclick="window.location.href='play.php';">Back</button>
+            <button class="difficulty-button" name="difficulty" value="easy">Easy</button>
+
+            <button class="difficulty-button <?php echo $medium_unlocked ? '' : 'disabled-button'; ?>" name="difficulty" value="medium" <?php echo $medium_unlocked ? '' : 'disabled'; ?> data-tooltip="Unlock Medium by answering 20 correct questions.">Medium</button>
+
+            <button class="difficulty-button <?php echo $hard_unlocked ? '' : 'disabled-button'; ?>" name="difficulty" value="hard" <?php echo $hard_unlocked ? '' : 'disabled'; ?> data-tooltip="Unlock Hard by answering 50 correct questions.">Hard</button>
+
+            <button type="button" class="difficulty-button" onclick="window.location.href='grade.php';">Back</button>
         </form>
 
         <button class="icon-button" onclick="toggleSound()">
