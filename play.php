@@ -174,9 +174,9 @@ $username = isset($_SESSION['username']) ? $_SESSION['username'] : 'Player'; // 
         </div> <!-- Welcome message -->
         <form action="difficulty.php" method="post">
             <!-- <button class="difficulty-button" name="difficulty" onclick="window.location.href='grade.php';">Play</button> -->
-            <!-- <button class="difficulty-button" name="difficulty" value="medium">Badges</button> -->
             <button type="button" class="difficulty-button" onclick="window.location.href='grade.php';">Play</button>
             <button type="button" class="difficulty-button" onclick="window.location.href='stats.php';">Stats</button>
+            <button type="button" class="difficulty-button" onclick="window.location.href='badges.php';">Badges</button>
             <button type="button" class="difficulty-button" onclick="window.location.href='leaderboard.php';">Leaderboard</button>
             <?php
             // Check if the user type is set and equals 'admin'
