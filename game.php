@@ -9,6 +9,7 @@ if (empty($_SESSION['logged_in']) || !$_SESSION['logged_in']) {
     exit;
 }
 $grade = $_SESSION['grade'];
+$_SESSION['difficulty'] = $_POST['difficulty'];
 $difficulty = $_POST['difficulty'];
 // Prepare and execute query to fetch quiz questions
 $questions = fetchQuizQuestions($grade, $difficulty);

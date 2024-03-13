@@ -10,11 +10,13 @@ if (!isset($_SESSION['logged_in']) || !$_SESSION['logged_in']) {
 
 $sessionId = $_SESSION['current_session_id'] ?? 0;
 $userGrade = $_SESSION['grade'] ?? '';
+$difficulty = $_SESSION['difficulty'];
+// var_dump($difficulty); // Use for debugging if needed
 
-// Fetch all questions for the user's grade
-$questionsQuery = "SELECT id, question, answer, explanation FROM quizquestions WHERE grade = ?";
+// Fetch all questions for the user's grade and difficulty level
+$questionsQuery = "SELECT id, question, answer, explanation FROM quizquestions WHERE grade = ? AND difficulty = ?";
 $questionsStmt = $mysqli->prepare($questionsQuery);
-$questionsStmt->bind_param("s", $userGrade);
+$questionsStmt->bind_param("ss", $userGrade, $difficulty); // 'ss' indicates both parameters are strings
 $questionsStmt->execute();
 $questionsResult = $questionsStmt->get_result();
 $questions = $questionsResult->fetch_all(MYSQLI_ASSOC);
