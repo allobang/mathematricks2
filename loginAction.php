@@ -27,21 +27,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['section'] = $row['section'];
             $_SESSION['usertype'] = $row['usertype'];
             
-            if($_SESSION['usertype']=='student'){
-                header("Location: play.php");
-            }else{
-                header("Location: play.php");
-            }
-            // Redirect to a secure page
+            // Redirect based on user type
+            header("Location: play.php");
         } else {
-            // Password is not correct
-            echo "Invalid username or password";
+            // Password is not correct, redirect with error message
+            header("Location: login.php?error=invalid");
         }
     } else {
-        echo "Invalid username or password";
+        // Username not found, redirect with error message
+        header("Location: login.php?error=invalid");
     }
 
     $stmt->close();
+    $mysqli->close();
+} else {
+    // Form not submitted, redirect to login page
+    header("Location: login.php");
 }
-$conn->close();
 ?>
